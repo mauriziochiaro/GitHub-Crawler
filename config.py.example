@@ -1,0 +1,9 @@
+# OPENAI API
+OPENAI_API_KEY = "sk-xxx"
+# client = OpenAI(api_key =  os.getenv('OPENAI_API_KEY'))
+MODEL = "gpt-3.5-turbo-1106"
+MAX_TOKENS = 5000
+
+# GITHUB API
+access_token = 'ghp_xxx'
+headers = {'Authorization': f'token {access_token}'}
