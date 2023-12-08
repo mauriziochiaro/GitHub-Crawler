@@ -70,11 +70,7 @@ To use the chatbot:
    - For private repositories, ensure your GitHub access token is configured as described above.
 
 ## Contributing
-Contributions to the GitHub Crawler Chatbot are welcome! Please read our [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines on how to contribute.
+Contributions to the GitHub Crawler Chatbot are welcome.
 
 ## License
 This project is licensed under the [MIT License](LICENSE).
-
-## Acknowledgements
-- OpenAI for the GPT models.
-- GitHub API for repository data access.
