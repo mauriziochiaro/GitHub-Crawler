@@ -1,10 +1,7 @@
-### README.md
-
-```markdown
-# GitHub Crawler Chatbot
+# GitHub Crawler
 
 ## Description
-GitHub Crawler Chatbot is an interactive application designed to analyze GitHub repositories. It offers insights into various aspects of projects including code quality, structure, documentation, and design. The chatbot interface allows users to interact with the GitHub API and OpenAI's GPT model to fetch information and suggestions for repository improvement.
+GitHub Crawler is an interactive application designed to analyze GitHub public and prvate repositories. It offers insights into various aspects of projects including code quality, structure, documentation, and design. The chatbot interface allows users to interact with the GitHub API and OpenAI's GPT model to fetch information and suggestions for repository improvement.
 
 ## Features
 - Chat interface for real-time interaction with GitHub repositories.
@@ -30,7 +27,7 @@ To set up the GitHub Crawler Chatbot on your local machine, follow these steps:
    ```
 
 3. **Set Up Environment Variables**
-   Create a `.env` file in the project root and add your OpenAI API key:
+   Create a `.env` file in the project root and add your OpenAI API key, or use the config file:
    ```
    OPENAI_API_KEY=your_api_key_here
    ```
@@ -48,7 +45,7 @@ The GitHub Crawler Chatbot can access both public and private GitHub repositorie
 
 2. **Configure the Application with Your Access Token**:
    - Open the `config.py` file in the project root.
-   - Replace `ghp_xxx` with your generated GitHub access token:
+   - Replace `ghp_yourGeneratedAccessToken` with your generated GitHub access token:
      ```python
      # GITHUB API
      access_token = 'ghp_yourGeneratedAccessToken'
@@ -81,4 +78,3 @@ This project is licensed under the [MIT License](LICENSE).
 ## Acknowledgements
 - OpenAI for the GPT models.
 - GitHub API for repository data access.
-```
