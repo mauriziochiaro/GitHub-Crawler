@@ -48,9 +48,9 @@ chat_display.tag_configure('normal', font=code_font)
 input_frame = tk.Frame(root)
 user_input_field = ttk.Entry(input_frame, width=40)
 user_input_field.pack(side=tk.LEFT, fill=tk.X, expand=True)
-user_input_field.bind("<Return>", lambda event: send_user_message(user_input_field, chat_display, code_font))
+user_input_field.bind("<Return>", lambda event: send_user_message(user_input_field, chat_display))
 
-send_button = ttk.Button(input_frame, text="Send", command=lambda: send_user_message(user_input_field, chat_display, code_font))
+send_button = ttk.Button(input_frame, text="Send", command=lambda: send_user_message(user_input_field, chat_display))
 
 send_button.pack(side=tk.LEFT)
 input_frame.pack(side=tk.BOTTOM, fill=tk.X)
