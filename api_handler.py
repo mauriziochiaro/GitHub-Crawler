@@ -17,7 +17,7 @@ from chat_manager import set_repo_details
 ########################################################################################################################
 
 # Initialize conversation history
-chat_history = [{"role": "system", "content": "You are a helpful assistant named GitHub Crawler GPT. GitHub Crawler GPT specializes in analyzing GitHub projects, their codebase, and architecture. It offers practical code snippets and suggestions for general improvements to projects. This AI tool can delve into various aspects of a project, including code quality, structure, documentation, and overall design. It provides insights and recommendations to enhance code efficiency, readability, and maintainability.\n\nYou can crawl any repository by calling one function: <crawl_github>. This function will use GitHub API for fetching and scraping repositories. From the <repo_url> it will be able to gather <repo_owner>, <repo_name> and eventually <file_path>.\n\nAlways answer in markdown."}]
+chat_history = [{"role": "system", "content": "You are a helpful assistant named GitHub Crawler GPT. GitHub Crawler GPT specializes in analyzing GitHub projects, their codebase, and architecture. It offers practical code snippets and suggestions for practical improvements to projects. This AI tool can delve into various aspects of a project, including code quality, structure, documentation, and overall design. It provides insights and recommendations to enhance code efficiency, readability, and maintainability.\n\nIt can crawl any repository by calling one function: <crawl_github>. This function will use GitHub API for fetching and scraping repositories. <crawl_github> will be able to gather <repo_owner>, <repo_name> and <file_path> from the <repo_url>.\n\nGuidelines:\n -Always answer in markdown;\n - never ask the user to provide code from th repository, once you have the URL of the repository you can crawl every file by passing the corresponding <repo_url> directory to the <crawl_github> function."}]
 
 client = OpenAI(api_key = OPENAI_API_KEY)
 
@@ -156,38 +156,44 @@ def fetch_directory_contents(api_url):
     return directory_items
 
 def fetch_file_via_api(repo_url):
-    # Split the URL to get the necessary parts
-    parts = repo_url.replace("https://github.com/", "").split("/")
-    repo_owner, repo_name = parts[0], parts[1]
+    try:
+        # Split the URL to get the necessary parts
+        parts = repo_url.replace("https://github.com/", "").split("/")
+        repo_owner, repo_name = parts[0], parts[1]
 
-    # Construct the API URL
-    if len(parts) <= 2:
-        api_url = f"https://api.github.com/repos/{repo_owner}/{repo_name}/contents/"
-    else:
-        if 'blob' in parts:
-            file_path_parts = parts[parts.index('blob') + 2:]
-            file_path = '/'.join(file_path_parts)
-            api_url = f"https://api.github.com/repos/{repo_owner}/{repo_name}/contents/{file_path}"
+        # Construct the API URL
+        if len(parts) <= 2:
+            api_url = f"https://api.github.com/repos/{repo_owner}/{repo_name}/contents/"
         else:
-            return "Invalid URL format."
-        
-    set_repo_details(repo_owner, repo_name)  
+            if 'blob' in parts:
+                file_path_parts = parts[parts.index('blob') + 2:]
+                file_path = '/'.join(file_path_parts)
+                api_url = f"https://api.github.com/repos/{repo_owner}/{repo_name}/contents/{file_path}"
+            else:
+                return "Invalid URL format."
+            
+        set_repo_details(repo_owner, repo_name)  
 
-    # Include the access token in the request header for authentication
-    response = requests.get(api_url, headers=headers)
+        # Include the access token in the request header for authentication
+        response = requests.get(api_url, headers=headers)
 
-    if response.status_code == 200:
-        json_data = response.json()
-        if isinstance(json_data, list):
-            # List the contents of the directory, including nested items
-            directory_contents = fetch_directory_contents(api_url)
-            return "\n".join(directory_contents)
-        elif 'download_url' in json_data:
-            # If it's a file, return its content
-            file_content = requests.get(json_data['download_url']).text
-            return file_content
+        if response.status_code == 200:
+            json_data = response.json()
+            if isinstance(json_data, list):
+                # List the contents of the directory, including nested items
+                directory_contents = fetch_directory_contents(api_url)
+                return "\n".join(directory_contents)
+            elif 'download_url' in json_data:
+                # If it's a file, return its content
+                file_content = requests.get(json_data['download_url']).text
+                return file_content
+            else:
+                return "Non-text file content cannot be displayed."
         else:
-            return "Non-text file content cannot be displayed."
-    else:
-        print("Failed to retrieve content with status code:", response.status_code)
-        return None
+            error_message = f"Failed to retrieve content from {api_url} with status code: {response.status_code}"
+            print(error_message)
+            return error_message
+    except Exception as e:
+        error_message = f"An error occurred while processing the request: {str(e)}"
+        print(error_message)
+        return error_message
