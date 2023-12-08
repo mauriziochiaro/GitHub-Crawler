@@ -41,15 +41,37 @@ def save_chat_as_markdown(chat_display, parent_window):
         with open(file_path, 'w', encoding='utf-8') as file:
             file.write(chat_text)
       
-def send_user_message(user_input_field, chat_display, code_font):
+def send_user_message(user_input_field, chat_display):
+    # Get user input from the input field
     user_input = user_input_field.get().strip()
-    if user_input:
-        update_chat_display('You', user_input, chat_display)
+
+    # Input validation: Check if the user input is not empty
+    if not user_input:
+        # Display an error message to the user
+        display_error_message(chat_display, "Please enter a valid message.")
+        return
+
+    # Display the user's input in the chat display
+    update_chat_display('You', user_input, chat_display)
+
+    try:
+        # Get the AI response based on the user input
         ai_response = fetch_openai_response_with_function_calling(user_input)
-        # Mock response for demonstration
-        # ai_response = "This is a mock response with Markdown-like formatting:\n\n### Header\n- Bullet point 1\n- Bullet point 2\n```code block```"
+        # Display the AI response in the chat display
         update_chat_display('Assistant', ai_response, chat_display)
+    except Exception as e:
+        # Handle any errors that occur during the AI response retrieval
+        display_error_message(chat_display, f"An error occurred: {str(e)}")
+    finally:
+        # Clear the user input field after processing
         user_input_field.delete(0, tk.END)
+
+def display_error_message(chat_display, error_message):
+    """
+    Display an error message in the chat display.
+    """
+    # Add error message to the chat display with a distinct style
+    update_chat_display('Error', error_message, chat_display)
 
 def update_chat_display(sender, message, chat_display):
     timestamp = datetime.now().strftime("%H:%M:%S")
