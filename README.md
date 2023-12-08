@@ -1,7 +1,7 @@
 # GitHub Crawler
 
 ## Description
-GitHub Crawler is an interactive application designed to analyze GitHub public and prvate repositories. It offers insights into various aspects of projects including code quality, structure, documentation, and design. The chatbot interface allows users to interact with the GitHub API and OpenAI's GPT model to fetch information and suggestions for repository improvement.
+GitHub Crawler is an interactive application designed to analyze GitHub public and private repositories. It offers insights into various aspects of projects, including code quality, structure, documentation, and design. The chatbot interface allows users to interact with the GitHub API and OpenAI's GPT model to fetch information and suggestions for repository improvement.
 
 ## Features
 - Chat interface for real-time interaction with GitHub repositories.
