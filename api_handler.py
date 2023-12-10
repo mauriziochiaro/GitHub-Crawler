@@ -12,7 +12,9 @@ import requests
 from openai import OpenAI
 from config import OPENAI_API_KEY, MAX_TOKENS
 import tiktoken
-from chat_manager import set_repo_details
+from chat_manager import set_repo_details,get_repo_details
+import os
+from tkinter import filedialog
 
 ########################################################################################################################
 
@@ -89,6 +91,21 @@ def fetch_openai_response_with_function_calling(user_input):
                     "required": ["repo_url"]
                 }
             }
+        },
+        {
+            "type": "function",
+            "function": {
+                "name": "save_code_block",
+                "description": "Save a specific block of code to a file",
+                "parameters": {
+                    "type": "object",
+                    "properties": {
+                        "code_block": {"type": "string"},
+                        "file_extension": {"type": "string", "default": ".md"}
+                    },
+                    "required": ["code_block"]
+                }
+            }
         }
     ]
 
@@ -117,6 +134,16 @@ def fetch_openai_response_with_function_calling(user_input):
                     "role": "tool",
                     "name": "crawl_github",
                     "content": crawl_result
+                })
+            elif tool_call.function.name == "save_code_block":
+                code_block = function_args.get("code_block")
+                file_extension = function_args.get("file_extension", ".md")  # Use default if not provided
+                save_code_block_result = save_code_block(code_block, file_extension)
+                chat_history.append({
+                    "tool_call_id": tool_call.id,
+                    "role": "tool",
+                    "name": "save_code_block",
+                    "content": save_code_block_result
                 })
 
         truncate_chat_history(chat_history)
@@ -197,3 +224,25 @@ def fetch_file_via_api(repo_url):
         error_message = f"An error occurred while processing the request: {str(e)}"
         print(error_message)
         return error_message
+
+def save_code_block(code_block_text, file_extension=".md"):
+    repo_owner, repo_name = get_repo_details()
+
+    # Use the provided file extension
+    suggested_filename = f"{repo_owner}-{repo_name}{file_extension}" if repo_owner and repo_name else f"chat_history{file_extension}"
+    export_folder = "chat_exports"  # Name of the subfolder
+
+    # Ensure the export folder exists
+    if not os.path.exists(export_folder):
+        os.makedirs(export_folder)
+
+    # Set the full path including the subfolder
+    initialdir = os.path.join(os.getcwd(), export_folder)
+    file_path = filedialog.asksaveasfilename(
+        title="Save Chat History",
+        initialdir=initialdir,  # Set initial directory to the export folder
+        initialfile=suggested_filename
+    )
+    if file_path:
+        with open(file_path, 'w', encoding='utf-8') as file:
+            file.write(code_block_text)
